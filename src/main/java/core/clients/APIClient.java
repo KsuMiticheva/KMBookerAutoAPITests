@@ -18,11 +18,11 @@ public class APIClient {
         Properties properties = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream(configFileName)) {
             if (input == null) {
-                throw new IllegalStateException("Config file not found: " + configFileName);
+                throw new IllegalStateException("Could not locate config file: " + configFileName);
             }
             properties.load(input);
         } catch (IOException e) {
-            throw new IllegalStateException("Could not load config file: " + configFileName, e);
+            throw new IllegalStateException("Config file was not found: " + configFileName, e);
         }
         return properties.getProperty("baseUrl");
     }
