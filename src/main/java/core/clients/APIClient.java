@@ -2,7 +2,11 @@ package core.clients;
 
 import core.settings.ApiEndpoints;
 import io.restassured.RestAssured;
+import io.restassured.filter.Filter;
+import io.restassured.filter.FilterContext;
 import io.restassured.response.Response;
+import io.restassured.specification.FilterableRequestSpecification;
+import io.restassured.specification.FilterableResponseSpecification;
 import io.restassured.specification.RequestSpecification;
 
 import java.io.IOException;
@@ -11,6 +15,7 @@ import java.util.Properties;
 
 public class APIClient {
     private final String baseUrl;
+    private String token;
 
     public APIClient() {
         this.baseUrl = determineBaseUrl();
@@ -36,7 +41,31 @@ public class APIClient {
         return RestAssured.given()
                 .baseUri(baseUrl)
                 .header("Accept", "application/json")
-                .header("Content-Type", "application/json");
+                .header("Content-Type", "application/json")
+                .filter(addAuthTokenFilter());
+    }
+
+    public void createToken(String username, String password) {
+        String requestBody = String.format("{\"username\":\"%s\",\"password\":\"%s\"}", username, password);
+
+        Response response = getRequestSpec()
+                .body(requestBody)
+                .when()
+                .post(ApiEndpoints.AUTH.getPath())
+                .then()
+                .statusCode(200)
+                .extract().response();
+
+        token = response.jsonPath().getString("token");
+    }
+
+    private Filter addAuthTokenFilter() {
+        return (FilterableRequestSpecification requestSpec, FilterableResponseSpecification responseSpec, FilterContext ctx) -> {
+            if (token != null) {
+                requestSpec.header("Cookie", "token=" + token);
+            }
+            return ctx.next(requestSpec, responseSpec);
+        };
     }
 
     public Response ping() {
@@ -65,6 +94,18 @@ public class APIClient {
                 .get(ApiEndpoints.BOOKING.getPathById(id))
                 .then()
                 .statusCode(200)
+                .extract()
+                .response();
+    }
+
+    public Response deleteBooking(int bookingId) {
+        return getRequestSpec()
+                .pathParam("id", bookingId)
+                .when()
+                .delete(ApiEndpoints.BOOKING.getPath() + "/{id}")
+                .then()
+                .log().all()
+                .statusCode(201)
                 .extract()
                 .response();
     }
