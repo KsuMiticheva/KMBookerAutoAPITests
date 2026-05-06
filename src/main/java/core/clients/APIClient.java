@@ -1,5 +1,6 @@
 package core.clients;
 
+import core.models.Booking;
 import core.settings.ApiEndpoints;
 import io.restassured.RestAssured;
 import io.restassured.filter.Filter;
@@ -93,7 +94,6 @@ public class APIClient {
                 .when()
                 .get(ApiEndpoints.BOOKING.getPathById(id))
                 .then()
-                .statusCode(200)
                 .extract()
                 .response();
     }
@@ -106,6 +106,18 @@ public class APIClient {
                 .then()
                 .log().all()
                 .statusCode(201)
+                .extract()
+                .response();
+    }
+
+    public Response createBooking(String newBooking) {
+        return getRequestSpec()
+                .body(newBooking)
+                .log().all()
+                .when()
+                .post(ApiEndpoints.BOOKING.getPath())
+                .then()
+                .log().all()
                 .extract()
                 .response();
     }

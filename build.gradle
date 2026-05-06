@@ -19,8 +19,12 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
     testImplementation 'org.assertj:assertj-core:3.27.7'
+
+    implementation group: 'io.qameta.allure', name: 'allure-junit5', version: '2.29.0'
 }
 
 test {
     useJUnitPlatform()
+
+    systemProperty "allure.results.directory", "build/allure-results"
 }
