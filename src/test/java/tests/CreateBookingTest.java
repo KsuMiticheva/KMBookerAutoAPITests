@@ -31,8 +31,8 @@ public class CreateBookingTest {
 
         newBooking = step("Create new booking object for use in the test", () -> {
             SingleBooking booking = new SingleBooking();
-            booking.setFirstname("Jane");
-            booking.setLastname("Doe");
+            booking.setFirstname("Jill");
+            booking.setLastname("Valentine");
             booking.setTotalprice(1250);
             booking.setDepositpaid(true);
             booking.setBookingdates(new Bookingdates("2026-06-01", "2026-07-01"));
