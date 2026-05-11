@@ -8,6 +8,26 @@ public class SingleBooking {
     private Bookingdates bookingdates;
     private String additionalneeds;
 
+    public SingleBooking() {}
+
+    public SingleBooking(String firstname, String lastname, int totalprice, boolean depositpaid, Bookingdates bookingdates, String additionalneeds) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.totalprice = totalprice;
+        this.depositpaid = depositpaid;
+        this.bookingdates = bookingdates;
+        this.additionalneeds = additionalneeds;
+    }
+
+    public SingleBooking(SingleBooking other) {
+        this.firstname = other.firstname;
+        this.lastname = other.lastname;
+        this.totalprice = other.totalprice;
+        this.depositpaid = other.depositpaid;
+        this.bookingdates = other.bookingdates;
+        this.additionalneeds = other.additionalneeds;
+    }
+
     public String getFirstname() {
         return firstname;
     }
