@@ -12,6 +12,7 @@ import io.restassured.specification.RequestSpecification;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 public class APIClient {
@@ -144,6 +145,23 @@ public class APIClient {
                 .patch(ApiEndpoints.BOOKING.getPath() + "/{id}")
                 .then()
                 .log().all()
+                .extract()
+                .response();
+    }
+
+    public Response getBookingByQuery(Map<String, String> queryParams) {
+        RequestSpecification spec = getRequestSpec();
+
+        if (queryParams != null && !queryParams.isEmpty()) {
+            spec.queryParams(queryParams);
+        }
+
+        return spec
+                .when()
+                .get(ApiEndpoints.BOOKING.getPath())
+                .then()
+                .log().all()
+                .statusCode(200)
                 .extract()
                 .response();
     }
