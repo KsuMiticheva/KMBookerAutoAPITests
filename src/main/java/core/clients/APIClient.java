@@ -1,5 +1,6 @@
 package core.clients;
 
+import core.models.Booking;
 import core.settings.ApiEndpoints;
 import io.restassured.RestAssured;
 import io.restassured.filter.Filter;
@@ -11,6 +12,7 @@ import io.restassured.specification.RequestSpecification;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 public class APIClient {
@@ -93,7 +95,6 @@ public class APIClient {
                 .when()
                 .get(ApiEndpoints.BOOKING.getPathById(id))
                 .then()
-                .statusCode(200)
                 .extract()
                 .response();
     }
@@ -106,6 +107,61 @@ public class APIClient {
                 .then()
                 .log().all()
                 .statusCode(201)
+                .extract()
+                .response();
+    }
+
+    public Response createBooking(String newBooking) {
+        return getRequestSpec()
+                .body(newBooking)
+                .log().all()
+                .when()
+                .post(ApiEndpoints.BOOKING.getPath())
+                .then()
+                .log().all()
+                .extract()
+                .response();
+    }
+
+    public Response updateBooking(String newBooking, int bookingId) {
+        return getRequestSpec()
+                .pathParam("id", bookingId)
+                .body(newBooking)
+                .log().all()
+                .when()
+                .put(ApiEndpoints.BOOKING.getPath() + "/{id}")
+                .then()
+                .log().all()
+                .extract()
+                .response();
+    }
+
+    public Response partialUpdateBooking(String patch, int bookingId) {
+        return getRequestSpec()
+                .pathParam("id", bookingId)
+                .body(patch)
+                .log().all()
+                .when()
+                .patch(ApiEndpoints.BOOKING.getPath() + "/{id}")
+                .then()
+                .log().all()
+                .extract()
+                .response();
+    }
+
+    public Response getBookingByQuery(Map<String, String> queryParams) {
+        RequestSpecification spec = getRequestSpec();
+
+        if (queryParams != null && !queryParams.isEmpty()) {
+            spec.queryParams(queryParams);
+        }
+
+        return spec
+                .when()
+                .get(ApiEndpoints.BOOKING.getPath())
+                .then()
+                .log().all()
+                .statusCode(200)
                 .extract()
                 .response();
     }
